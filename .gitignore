@@ -1,0 +1,23 @@
+# Node
+errorhub-front/node_modules/
+errorhub-front/.next/
+errorhub-front/out/
+errorhub-front/.env.local
+errorhub-front/.env.*.local
+
+# Maven
+errorhub-back/target/
+errorhub-back/.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local

@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.errorhub.dto.ErrorLogCreateRequestDto;
@@ -18,6 +22,7 @@ public class ErrorService {
 
     private final ErrorLogRepository errorLogRepository;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     public ErrorService(ErrorLogRepository errorLogRepository) {
         this.errorLogRepository = errorLogRepository;
@@ -39,12 +44,11 @@ public class ErrorService {
         return convertToResponseDto(saved);
     }
 
-    // エラー情報一覧取得
-    public List<ErrorLogResponseDto> getAllErrors() {
-        return errorLogRepository.findAll()
-                .stream()
-                .map(this::convertToResponseDto)
-                .toList();
+    // エラー情報一覧取得（ページング対応）
+    public Page<ErrorLogResponseDto> getAllErrors(int page) {
+        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return errorLogRepository.findAll(pageable)
+                .map(this::convertToResponseDto);
     }
 
     // エラー情報詳細取得
@@ -85,12 +89,11 @@ public class ErrorService {
         errorLogRepository.delete(errorLog);
     }
 
-    // キーワード検索
-    public List<ErrorLogResponseDto> searchByKeyword(String keyword) {
-        return errorLogRepository.searchByKeyword(keyword)
-                .stream()
-                .map(this::convertToResponseDto)
-                .toList();
+    // キーワード検索（ページング対応）
+    public Page<ErrorLogResponseDto> searchByKeyword(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return errorLogRepository.searchByKeyword(keyword, pageable)
+                .map(this::convertToResponseDto);
     }
 
     // エンティティ → DTO 変換

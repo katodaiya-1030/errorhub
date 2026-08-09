@@ -1,9 +1,8 @@
 package com.example.errorhub.controller;
 
 import java.net.URI;
-import java.util.List;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +31,15 @@ public class ErrorController {
         this.errorService = errorService;
     }
 
+    // キーワード検索（ページング対応）
+    @GetMapping("/search")
+    public ResponseEntity<Page<ErrorLogResponseDto>> searchErrors(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page) {
+        Page<ErrorLogResponseDto> results = errorService.searchByKeyword(keyword, page);
+        return ResponseEntity.ok(results);
+    }
+
     // エラー情報登録
     @PostMapping
     public ResponseEntity<ErrorLogResponseDto> createError(
@@ -42,10 +50,11 @@ public class ErrorController {
                 .body(responseDto);
     }
 
-    // エラー情報一覧取得
+    // エラー情報一覧取得（ページング対応）
     @GetMapping
-    public ResponseEntity<List<ErrorLogResponseDto>> getErrors() {
-        List<ErrorLogResponseDto> logs = errorService.getAllErrors();
+    public ResponseEntity<Page<ErrorLogResponseDto>> getErrors(
+            @RequestParam(defaultValue = "0") int page) {
+        Page<ErrorLogResponseDto> logs = errorService.getAllErrors(page);
         return ResponseEntity.ok(logs);
     }
 
@@ -72,13 +81,5 @@ public class ErrorController {
             @PathVariable Long id) {
         errorService.deleteError(id);
         return ResponseEntity.noContent().build();
-    }
-
-    // キーワード検索
-    @GetMapping("/search")
-    public ResponseEntity<List<ErrorLogResponseDto>> searchErrors(
-            @RequestParam String keyword) {
-        List<ErrorLogResponseDto> results = errorService.searchByKeyword(keyword);
-        return ResponseEntity.ok(results);
     }
 }

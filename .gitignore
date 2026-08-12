@@ -21,3 +21,4 @@ errorhub-back/.mvn/wrapper/maven-wrapper.jar
 .env
 .env.local
 .env.*.local
+errorhub-back/src/main/resources/application-local.properties

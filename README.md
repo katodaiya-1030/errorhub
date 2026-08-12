@@ -51,9 +51,9 @@
 
 ```mermaid
 flowchart LR
-  U["利用者"] --> F["Vercel<br/>Next.js / TypeScript"]
-  F --> B["Fly.io<br/>Spring Boot REST API"]
-  B --> D["Supabase<br/>PostgreSQL"]
+  U["利用者"] --> F["Vercel : Next.js / TypeScript"]
+  F --> B["Fly.io : Spring Boot REST API"]
+  B --> D["Supabase : PostgreSQL"]
 ```
 
 ## API

@@ -1,195 +1,170 @@
 # ERROR HUB
 
-エラーログを一元管理できる Full Stack ポートフォリオアプリケーション。
-発生したエラーと解決方法、再発防止策を記録・検索できます。
+開発中に発生したエラー情報を、登録・検索・共有するためのフルスタック Web アプリケーションです。
 
-**🌐 デモ：** https://errorhub-self.vercel.app
+エラー内容だけでなく、原因・解決方法・再発防止策をあわせて蓄積し、同じ問題の調査時間を短縮することを目的に作成しました。
 
----
+## Live Demo
 
-## 📋 機能
+- Frontend: https://errorhub-self.vercel.app
+- Backend API: https://errorhub-back.fly.dev/api/errors
+- Repository: https://github.com/katodaiya-1030/errorhub
 
-- ✅ エラー情報の新規登録・編集・削除
-- ✅ キーワード検索（言語、フレームワーク、エラー内容で横断検索）
-- ✅ ページネーション（1ページ 10 件表示）
-- ✅ リアルタイムバリデーション（フロント + バック）
-- ✅ 統計情報表示（登録済みエラー数、使用言語、フレームワーク）
+> [!NOTE]
+> 現在はポートフォリオ用デモとして公開しています。認証機能は未実装のため、公開 URL を知るユーザーはデータを登録・編集・削除できます。実運用では認証・認可を追加する想定です。
 
----
+## 主な機能
 
-## 🛠️ 技術スタック
+- エラーログの新規登録
+- エラーログの一覧表示
+- キーワードによる横断検索
+- エラーログの詳細表示・編集・削除
+- ページネーション
+- 入力値バリデーション
+- API エラー発生時のメッセージ表示
 
-### フロントエンド
-- **Framework:** Next.js 16.2.11
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **UI State:** React Hooks
-- **Hosting:** Vercel
+## 使用技術
 
-### バックエンド
-- **Framework:** Spring Boot 4.1.0
-- **Language:** Java 21
-- **ORM:** Spring Data JPA (Hibernate 7.4.1)
-- **Database:** MySQL
-- **Validation:** Jakarta Bean Validation
-- **CORS:** Spring Web Config
+### Frontend
 
----
+- Next.js 16
+- TypeScript
+- React Hooks
+- Tailwind CSS
+- Vercel
 
-## 📦 API エンドポイント
+### Backend
 
-| メソッド | エンドポイント | 説明 |
-|---------|-------------|------|
-| `GET` | `/api/errors?page=0` | エラー一覧取得（ページング） |
-| `GET` | `/api/errors/{id}` | エラー詳細取得 |
-| `GET` | `/api/errors/search?keyword=Java&page=0` | キーワード検索 |
-| `POST` | `/api/errors` | エラー新規登録 |
-| `PUT` | `/api/errors/{id}` | エラー情報更新 |
-| `DELETE` | `/api/errors/{id}` | エラー削除 |
-
----
-
-## ✨ 特徴
-
-### 1. 詳細なエラーハンドリング
-- バリデーションエラーをフィールドごとに表示
-- 500 エラー時にサーバーログを記録
-- ユーザーフレンドリーなエラーメッセージ
-
-### 2. 堅牢な入力検証
-- フロント側：即座にバリデーション
-- バック側：入力値の最大文字数制限
-  - エラー名：255 文字
-  - メッセージ：500 文字
-  - スタックトレース：10000 文字
-
-### 3. UI/UX 改善
-- 送信中の二重送信防止
-- 削除中の視覚的フィードバック
-- 統計情報で登録状況を一目で把握
-- レスポンシブデザイン
-
-### 4. アーキテクチャ設計
-- **DTO パターン：** Entity と API の責務分離
-- **カスタム例外処理：** GlobalExceptionHandler で統一管理
-- **ページネーション：** Spring Data の Pageable で効率的に実装
-- **CORS 設定：** WebConfig で環境変数対応
-
----
-
-## 🚀 セットアップ
-
-### 前提条件
 - Java 21
-- Node.js 18+
-- MySQL 8.0+
+- Spring Boot 4
+- Spring Data JPA / Hibernate
+- Jakarta Bean Validation
+- REST API
+- Fly.io
 
-### バックエンド
+### Database
 
-```bash
-cd errorhub-back
+- PostgreSQL
+- Supabase
 
-# MySQL に接続して DB を作成
-mysql -u root -p
-> CREATE DATABASE errorhub;
+## アーキテクチャ
 
-# 設定ファイルを編集
-# src/main/resources/application.properties
-spring.datasource.url=jdbc:mysql://localhost:3306/errorhub
-spring.datasource.username=root
-spring.datasource.password=your_password
-
-# サーバー起動
-./mvnw spring-boot:run
+```mermaid
+flowchart LR
+  U["利用者"] --> F["Vercel<br/>Next.js / TypeScript"]
+  F --> B["Fly.io<br/>Spring Boot REST API"]
+  B --> D["Supabase<br/>PostgreSQL"]
 ```
 
-サーバーは `http://localhost:8080` で起動します。
+## API
 
-### フロントエンド
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/errors?page=0` | エラーログ一覧を取得 |
+| `GET` | `/api/errors/{id}` | エラーログ詳細を取得 |
+| `GET` | `/api/errors/search?keyword=Java&page=0` | キーワード検索 |
+| `POST` | `/api/errors` | エラーログを登録 |
+| `PUT` | `/api/errors/{id}` | エラーログを更新 |
+| `DELETE` | `/api/errors/{id}` | エラーログを削除 |
 
-```bash
+## 工夫した点
+
+### フロントエンドとバックエンドを分離した構成
+
+Next.js と Spring Boot を分離し、フロントエンドは Vercel、バックエンドは Fly.io にデプロイしています。環境変数 `NEXT_PUBLIC_API_URL` を利用し、ローカル環境と本番環境で API の接続先を切り替えられる構成にしました。
+
+### API 設計と入力チェック
+
+Entity をそのまま返さず、DTO を用いて API の入出力を管理しています。また、Jakarta Bean Validation で必須項目・文字数を検証し、不正な入力は `400 Bad Request` として返却します。
+
+### 例外処理の共通化
+
+`@RestControllerAdvice` を使い、バリデーションエラー、存在しないデータへのアクセス、予期しないエラーを共通形式で返すようにしています。
+
+### 本番環境の障害調査・復旧
+
+Fly.io のログを確認し、Hibernate Dialect の設定不整合と Supabase の接続先ホスト名の誤りを特定・修正しました。デプロイ後に API エンドポイントの応答まで確認し、本番環境で動作する状態まで検証しています。
+
+## ローカルでの起動方法
+
+### 前提条件
+
+- Java 21
+- Node.js 18 以上
+- MySQL 8 以上
+
+### 1. バックエンド
+
+ローカル MySQL に `errorhub` データベースを作成します。
+
+```sql
+CREATE DATABASE errorhub;
+```
+
+次のファイルを作成します。
+
+```text
+errorhub-back/src/main/resources/application-local.properties
+```
+
+内容は `application-local.properties.example` を参考にしてください。
+
+PowerShell で DB パスワードを設定し、バックエンドを起動します。
+
+```powershell
+cd errorhub-back
+$env:SPRING_DATASOURCE_PASSWORD="あなたのMySQLパスワード"
+.\mvnw spring-boot:run
+```
+
+バックエンドは `http://localhost:8080` で起動します。
+
+### 2. フロントエンド
+
+```powershell
 cd errorhub-front
+```
 
-# 環境変数設定
-echo "NEXT_PUBLIC_API_URL=http://localhost:8080/api/errors" > .env.local
+`.env.local` を作成します。
 
-# 依存関係インストール
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080/api/errors
+```
+
+依存関係をインストールして起動します。
+
+```powershell
 npm install
-
-# 開発サーバー起動
 npm run dev
 ```
 
-フロントは `http://localhost:3000` で起動します。
+フロントエンドは `http://localhost:3000` で起動します。
 
----
+## 今後の改善予定
 
-## 📊 ディレクトリ構造
+- Supabase Auth と Spring Security を利用した認証・認可
+- Swagger / OpenAPI による API 仕様書の公開
+- ローディング表示・トースト通知などの UI / UX 改善
+- API・サービス層の自動テスト追加
 
-### バックエンド
+## ディレクトリ構成
 
+```text
+errorhub/
+├── errorhub-front/       # Next.js フロントエンド
+│   └── app/
+│       ├── components/
+│       ├── hooks/
+│       ├── create/
+│       └── list/
+│
+└── errorhub-back/        # Spring Boot バックエンド
+    └── src/main/java/com/example/errorhub/
+        ├── config/
+        ├── controller/
+        ├── dto/
+        ├── entity/
+        ├── exception/
+        ├── repository/
+        └── service/
 ```
-errorhub-back/
-├── src/main/java/com/example/errorhub/
-│   ├── controller/        # API エンドポイント
-│   ├── service/           # ビジネスロジック
-│   ├── repository/        # DB アクセス層
-│   ├── entity/            # JPA エンティティ
-│   ├── dto/               # API リクエスト/レスポンス
-│   ├── exception/         # 例外処理
-│   └── config/            # CORS 設定
-└── pom.xml
-```
-
-### フロントエンド
-
-```
-errorhub-front/
-├── app/
-│   ├── page.tsx           # ホーム画面
-│   ├── create/page.tsx    # 登録・編集画面
-│   ├── list/page.tsx      # 一覧画面
-│   ├── components/        # 共通コンポーネント
-│   └── hooks/             # カスタムフック
-└── package.json
-```
-
----
-
-## 🧪 テスト手順
-
-1. **ホーム画面** で統計情報を確認
-2. **登録画面** で新規エラーを登録
-   - 必須項目を空にして送信 → バリデーションエラー表示
-   - 1000 文字以上のテキストを入力 → 文字数エラー表示
-3. **一覧画面** で登録したエラーを確認
-4. **検索機能** でキーワード検索
-5. **編集機能** でエラー情報を修正
-6. **削除機能** でエラーを削除
-7. **ページネーション** で複数ページを移動
-
----
-
-## 📝 学習ポイント
-
-このプロジェクトで実装した技術：
-
-- ✅ Full Stack 開発（フロント + バック）
-- ✅ TypeScript での型安全な React 開発
-- ✅ Java Spring Boot での REST API 設計
-- ✅ DTO パターンによる責務分離
-- ✅ バリデーション（フロント + バック）
-- ✅ 例外処理とログ出力
-- ✅ ページネーション実装
-- ✅ CORS 設定と環境変数管理
-- ✅ Git ワークフロー
-
----
-
-## 📧 お問い合わせ
-
-このプロジェクトについてのご質問や案件のご依頼は、[GitHub Issues](https://github.com/katodaiya-1030/errorhub/issues) までお願いします。
-
----
-
-**Last Updated:** 2026-08-10

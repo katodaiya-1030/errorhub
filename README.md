@@ -7,7 +7,7 @@
 ## Live Demo
 
 - Frontend: https://errorhub-self.vercel.app
-- Backend API: https://errorhub-back.fly.dev/api/errors
+- Backend API: https://errorhub-b3me.onrender.com
 - Repository: https://github.com/katodaiya-1030/errorhub
 
 > [!NOTE]
@@ -40,7 +40,7 @@
 - Spring Data JPA / Hibernate
 - Jakarta Bean Validation
 - REST API
-- Fly.io
+- Render
 
 ### Database
 
@@ -52,7 +52,7 @@
 ```mermaid
 flowchart LR
   U["利用者"] --> F["Vercel : Next.js"]
-  F --> B["Fly.io : Spring Boot"]
+  F --> B["Render : Spring Boot"]
   B --> D["Supabase : PostgreSQL"]
 ```
 
@@ -71,7 +71,7 @@ flowchart LR
 
 ### フロントエンドとバックエンドを分離した構成
 
-Next.js と Spring Boot を分離し、フロントエンドは Vercel、バックエンドは Fly.io にデプロイしています。環境変数 `NEXT_PUBLIC_API_URL` を利用し、ローカル環境と本番環境で API の接続先を切り替えられる構成にしました。
+Next.js と Spring Boot を分離し、フロントエンドは Vercel、バックエンドは Render にデプロイしています。環境変数 `NEXT_PUBLIC_API_URL` を利用し、ローカル環境と本番環境で API の接続先を切り替えられる構成にしました。
 
 ### API 設計と入力チェック
 
@@ -83,7 +83,7 @@ Entity をそのまま返さず、DTO を用いて API の入出力を管理し�
 
 ### 本番環境の障害調査・復旧
 
-Fly.io のログを確認し、Hibernate Dialect の設定不整合と Supabase の接続先ホスト名の誤りを特定・修正しました。デプロイ後に API エンドポイントの応答まで確認し、本番環境で動作する状態まで検証しています。
+Render のログを確認し、Hibernate Dialect の設定不整合と Supabase の接続先ホスト名の誤りを特定・修正しました。デプロイ後に API エンドポイントの応答まで確認し、本番環境で動作する状態まで検証しています。
 
 ## ローカルでの起動方法
 
